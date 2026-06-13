@@ -33,6 +33,8 @@ This creates a gap between **awareness and action**.
 ---
 
 ## 🧩 Project Architecture (File Structure Diagram)
+
+```mermaid
 graph TD
     A[EcoTrack-Pro Root]
 
@@ -60,6 +62,8 @@ graph TD
     D2 --> D3
     D4 --> D3
 ## 🔄 Application Workflow
+
+```mermaid
 flowchart TD
     A([User Opens App]) --> B{Authenticated?}
 
