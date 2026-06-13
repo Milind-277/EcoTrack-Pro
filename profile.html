@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack Pro - User Profile</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo"><i class="fas fa-leaf text-primary"></i> EcoTrack Pro</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="auth-required">Dashboard</a></li>
+      <li><a href="tracker.html" class="auth-required">Tracker</a></li>
+      <li><a href="insights.html" class="auth-required">Insights</a></li>
+      <li><a href="reports.html" class="auth-required">Reports</a></li>
+      <li><a href="simulator.html" class="auth-required">Simulator</a></li>
+      <li><a href="leaderboard.html" class="auth-required">Leaderboard</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle"><i class="fas fa-sun"></i></button>
+      <div id="navAvatar" class="user-avatar-mini auth-required">U</div>
+      <button class="logout-btn auth-required" id="navLogout" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </nav>
+
+  <div class="container fade-in" style="max-width: 900px;">
+    
+    <div class="glass-panel mb-4 text-center">
+      <div id="profAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 0 auto 1rem; font-weight: bold;">U</div>
+      <h2 class="text-3xl" id="profName">User Name</h2>
+      <p class="text-muted" id="profEmail">user@example.com</p>
+    </div>
+
+    <!-- Gamification Stats -->
+    <div class="grid grid-cols-3 mb-4">
+      <div class="glass-panel text-center">
+        <h3 class="text-muted text-sm uppercase">Total Points</h3>
+        <div class="text-4xl font-bold mt-2 text-warning"><span id="profPoints">0</span> <i class="fas fa-star text-xl"></i></div>
+      </div>
+      <div class="glass-panel text-center">
+        <h3 class="text-muted text-sm uppercase">Current Streak</h3>
+        <div class="text-4xl font-bold mt-2 text-primary"><span id="profStreak">0</span> <i class="fas fa-fire text-xl"></i></div>
+      </div>
+      <div class="glass-panel text-center">
+        <h3 class="text-muted text-sm uppercase">Total Logs</h3>
+        <div class="text-4xl font-bold mt-2 text-secondary"><span id="profLogs">0</span> <i class="fas fa-clipboard-check text-xl"></i></div>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="glass-panel">
+      <h3 class="mb-4"><i class="fas fa-trophy text-warning"></i> Badges & Achievements</h3>
+      <div class="flex" style="gap: 2rem; flex-wrap: wrap; justify-content: center;" id="badgesContainer">
+        
+        <div class="achievement-badge" id="badge_beginner">
+          <i class="fas fa-seedling"></i>
+          <span class="achievement-name">Eco Beginner</span>
+        </div>
+        
+        <div class="achievement-badge" id="badge_streak_3">
+          <i class="fas fa-fire-alt"></i>
+          <span class="achievement-name">Consistency (3 Days)</span>
+        </div>
+        
+        <div class="achievement-badge" id="badge_eco_hero">
+          <i class="fas fa-shield-alt"></i>
+          <span class="achievement-name">Eco Hero (100 Pts)</span>
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.EcoAuth.requireAuth();
+      const user = window.EcoData.getCurrentUser();
+
+      if(user) {
+        document.getElementById('profName').innerText = user.name;
+        document.getElementById('profEmail').innerText = user.email;
+        document.getElementById('profAvatar').innerText = user.name.charAt(0).toUpperCase();
+        
+        document.getElementById('profPoints').innerText = user.points;
+        document.getElementById('profStreak').innerText = user.streak;
+        document.getElementById('profLogs').innerText = user.history.length;
+
+        // Unlock Badges in UI
+        user.badges.forEach(badgeId => {
+          const badgeEl = document.getElementById(`badge_${badgeId}`);
+          if(badgeEl) {
+            badgeEl.classList.add('unlocked');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

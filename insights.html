@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack Pro - Insights</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo"><i class="fas fa-leaf text-primary"></i> EcoTrack Pro</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="auth-required">Dashboard</a></li>
+      <li><a href="tracker.html" class="auth-required">Tracker</a></li>
+      <li><a href="insights.html" class="auth-required">Insights</a></li>
+      <li><a href="reports.html" class="auth-required">Reports</a></li>
+      <li><a href="simulator.html" class="auth-required">Simulator</a></li>
+      <li><a href="leaderboard.html" class="auth-required">Leaderboard</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle"><i class="fas fa-sun"></i></button>
+      <div id="navAvatar" class="user-avatar-mini auth-required">U</div>
+      <button class="logout-btn auth-required" id="navLogout" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </nav>
+
+  <div class="container fade-in">
+    <div class="glass-panel text-center mb-4">
+      <h2 class="text-3xl"><i class="fas fa-brain text-accent"></i> AI Smart Insights</h2>
+      <p class="text-muted">Dynamic, personalized recommendations based on your recent activity footprint.</p>
+    </div>
+
+    <div id="noDataMsg" class="glass-panel text-center" style="display: none;">
+      <p>Log some data first so our AI can analyze your habits!</p>
+    </div>
+
+    <div id="insightsContent" class="grid grid-cols-2" style="display: none;">
+      
+      <!-- AI Engine Output -->
+      <div class="glass-panel" style="background: rgba(139, 92, 246, 0.05); border-color: var(--accent-color);">
+        <h3 class="mb-3"><i class="fas fa-robot text-accent"></i> Core Analysis</h3>
+        <div id="aiSummary" class="text-lg font-bold mb-3"></div>
+        <ul id="aiTips" style="padding-left: 1.5rem; line-height: 1.8;" class="text-muted"></ul>
+      </div>
+
+      <!-- Carbon Offsets -->
+      <div class="glass-panel">
+        <h3 class="mb-3"><i class="fas fa-seedling text-primary"></i> Offset Your Impact</h3>
+        <p class="text-muted mb-3">Can't reduce emissions further? Consider carbon offsetting projects to balance your footprint.</p>
+        
+        <div class="grid grid-cols-1 gap-4">
+          <div style="background: var(--input-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+            <div class="flex justify-between items-center">
+              <strong>Planting Trees</strong>
+              <span class="badge badge-success">-20 kg / tree</span>
+            </div>
+            <p class="text-sm mt-2 text-muted">Contribute to global reforestation efforts. One mature tree absorbs ~20kg of CO₂ annually.</p>
+          </div>
+          
+          <div style="background: var(--input-bg); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--warning-color);">
+            <div class="flex justify-between items-center">
+              <strong>Renewable Energy</strong>
+              <span class="badge badge-warning">High Impact</span>
+            </div>
+            <p class="text-sm mt-2 text-muted">Invest in solar and wind farms to reduce the global reliance on fossil fuels.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.EcoAuth.requireAuth();
+      const user = window.EcoData.getCurrentUser();
+
+      if(!user || user.history.length === 0) {
+        document.getElementById('noDataMsg').style.display = 'block';
+        return;
+      }
+      
+      document.getElementById('insightsContent').style.display = 'grid';
+
+      // Rule-based AI Engine Simulation
+      const history = user.history;
+      const last7 = history.slice(-7);
+      
+      let totals = { trans: 0, elec: 0, food: 0, water: 0, sum: 0 };
+      let lastMode = '', lastFood = '';
+
+      last7.forEach(h => {
+        const trans = (h.transportDist * window.EcoData.FACTORS.transport[h.transportMode]);
+        const elec = (h.acHours * window.EcoData.FACTORS.electricity.ac) + 
+                     (h.fanHours * window.EcoData.FACTORS.electricity.fan) + 
+                     (h.applianceHours * window.EcoData.FACTORS.electricity.appliances);
+        const food = window.EcoData.FACTORS.food[h.foodType];
+        const water = (h.waterLiters * window.EcoData.FACTORS.water);
+        
+        totals.trans += trans;
+        totals.elec += elec;
+        totals.food += food;
+        totals.water += water;
+        totals.sum += (trans + elec + food + water);
+
+        lastMode = h.transportMode;
+        lastFood = h.foodType;
+      });
+
+      const maxCatVal = Math.max(totals.trans, totals.elec, totals.food);
+      const summaryEl = document.getElementById('aiSummary');
+      const tipsEl = document.getElementById('aiTips');
+      
+      let tipsHTML = '';
+
+      if (maxCatVal === totals.trans) {
+        const pct = ((totals.trans / totals.sum) * 100).toFixed(0);
+        summaryEl.innerHTML = `Your transport contributes <span class="text-danger">${pct}%</span> of your recent emissions.`;
+        
+        if (lastMode === 'car') {
+          tipsHTML += `<li>Switching to public transport can reduce your footprint by up to 25%.</li>`;
+          tipsHTML += `<li>Consider carpooling if driving is absolutely necessary.</li>`;
+        } else {
+          tipsHTML += `<li>Even with public transport, minimizing unnecessary trips helps.</li>`;
+        }
+      } else if (maxCatVal === totals.elec) {
+        const pct = ((totals.elec / totals.sum) * 100).toFixed(0);
+        summaryEl.innerHTML = `Electricity contributes <span class="text-danger">${pct}%</span> of your recent emissions.`;
+        
+        tipsHTML += `<li>Reducing AC usage by just 2 hours can save significant energy.</li>`;
+        tipsHTML += `<li>Unplug idle appliances (vampire power draw).</li>`;
+      } else {
+        const pct = ((totals.food / totals.sum) * 100).toFixed(0);
+        summaryEl.innerHTML = `Your diet contributes <span class="text-danger">${pct}%</span> of your recent emissions.`;
+        
+        if (lastFood === 'non_veg') {
+          tipsHTML += `<li>A vegetarian diet emits ~50% less carbon than a meat-heavy one. Try 'Meatless Mondays'.</li>`;
+        } else if (lastFood === 'processed') {
+          tipsHTML += `<li>Processed foods require high energy to manufacture. Opt for fresh, local produce.</li>`;
+        } else {
+          tipsHTML += `<li>Great job maintaining a low-emission diet! Source ingredients locally.</li>`;
+        }
+      }
+
+      tipsEl.innerHTML = tipsHTML;
+    });
+  </script>
+</body>
+</html>

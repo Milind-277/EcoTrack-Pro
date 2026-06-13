@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack Pro - Simulator</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo"><i class="fas fa-leaf text-primary"></i> EcoTrack Pro</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="auth-required">Dashboard</a></li>
+      <li><a href="tracker.html" class="auth-required">Tracker</a></li>
+      <li><a href="insights.html" class="auth-required">Insights</a></li>
+      <li><a href="reports.html" class="auth-required">Reports</a></li>
+      <li><a href="simulator.html" class="auth-required">Simulator</a></li>
+      <li><a href="leaderboard.html" class="auth-required">Leaderboard</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle"><i class="fas fa-sun"></i></button>
+      <div id="navAvatar" class="user-avatar-mini auth-required">U</div>
+      <button class="logout-btn auth-required" id="navLogout" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+  </nav>
+
+  <div class="container fade-in">
+    <div class="glass-panel text-center mb-4">
+      <h2 class="text-3xl"><i class="fas fa-flask text-secondary"></i> Footprint Simulator</h2>
+      <p class="text-muted">Adjust scenarios below to visualize the impact on your baseline footprint.</p>
+    </div>
+
+    <div class="grid grid-cols-2">
+      
+      <!-- Controls -->
+      <div class="glass-panel">
+        <h3 class="mb-4">Scenario Builder</h3>
+        
+        <div class="form-group mb-4">
+          <label>Reduce Travel Distance by: <span id="simTravelVal" class="text-primary font-bold">0</span>%</label>
+          <input type="range" id="simTravel" min="0" max="100" value="0">
+        </div>
+
+        <div class="form-group mb-4">
+          <label>Switch Diet To:</label>
+          <select id="simDiet">
+            <option value="none">No Change</option>
+            <option value="veg">Vegetarian</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Reduce Electricity Usage by: <span id="simElecVal" class="text-warning font-bold">0</span>%</label>
+          <input type="range" id="simElec" min="0" max="100" value="0">
+        </div>
+      </div>
+
+      <!-- Comparison -->
+      <div class="glass-panel text-center flex" style="flex-direction: column; justify-content: center;">
+        <h3 class="mb-3">Before vs. After</h3>
+        <canvas id="compareChart" style="max-height: 250px;"></canvas>
+        
+        <div class="mt-4">
+          <p class="text-xl font-bold text-primary">Potential Savings: <span id="simSavings">0</span> kg/day</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      window.EcoAuth.requireAuth();
+      const user = window.EcoData.getCurrentUser();
+
+      let baselineTotal = 0;
+      let baselineData = null;
+
+      if(user && user.history.length > 0) {
+        // Use last entry as baseline
+        baselineData = user.history[user.history.length - 1];
+        baselineTotal = baselineData.total;
+      } else {
+        // Mock baseline if no data
+        baselineData = {
+          transportDist: 20, transportMode: 'car',
+          acHours: 4, fanHours: 5, applianceHours: 5,
+          foodType: 'non_veg', waterLiters: 150
+        };
+        baselineTotal = 20.3; // Approx mock total
+      }
+
+      let chartInstance = null;
+
+      function initCompareChart(before, after) {
+        const ctx = document.getElementById('compareChart');
+        if(!ctx) return;
+        Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || '#94A3B8';
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+
+        if(chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(ctx.getContext('2d'), {
+          type: 'bar',
+          data: {
+            labels: ['Baseline', 'Simulated'],
+            datasets: [{
+              label: 'Daily Emissions (kg CO₂)',
+              data: [before, after],
+              backgroundColor: ['rgba(239, 68, 68, 0.7)', 'rgba(16, 185, 129, 0.7)'],
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+      }
+
+      function updateSimulation() {
+        const tReduce = parseInt(document.getElementById('simTravel').value);
+        const eReduce = parseInt(document.getElementById('simElec').value);
+        const dSwitch = document.getElementById('simDiet').value;
+
+        document.getElementById('simTravelVal').innerText = tReduce;
+        document.getElementById('simElecVal').innerText = eReduce;
+
+        // Calculate simulated footprint
+        const newDist = baselineData.transportDist * (1 - (tReduce/100));
+        const newAc = baselineData.acHours * (1 - (eReduce/100));
+        const newFan = baselineData.fanHours * (1 - (eReduce/100));
+        const newApp = baselineData.applianceHours * (1 - (eReduce/100));
+        const newDiet = dSwitch === 'none' ? baselineData.foodType : dSwitch;
+
+        const simulatedTotal = 
+          (newDist * window.EcoData.FACTORS.transport[baselineData.transportMode]) +
+          (newAc * window.EcoData.FACTORS.electricity.ac) +
+          (newFan * window.EcoData.FACTORS.electricity.fan) +
+          (newApp * window.EcoData.FACTORS.electricity.appliances) +
+          window.EcoData.FACTORS.food[newDiet] +
+          (baselineData.waterLiters * window.EcoData.FACTORS.water);
+
+        const savings = baselineTotal - simulatedTotal;
+        document.getElementById('simSavings').innerText = savings.toFixed(2);
+
+        initCompareChart(baselineTotal.toFixed(2), simulatedTotal.toFixed(2));
+      }
+
+      ['simTravel', 'simElec', 'simDiet'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateSimulation);
+      });
+
+      updateSimulation();
+    });
+  </script>
+</body>
+</html>
