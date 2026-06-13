@@ -67,29 +67,30 @@ graph TD
 
 ```mermaid
 flowchart TD
-    A([User Opens App]) --> B{Authenticated?}
 
-    B -- No --> C[Login / Signup (auth.html)]
-    B -- Yes --> D[Dashboard (index.html)]
+A([User Opens App]) --> B{Is User Logged In?}
 
-    C --> D
+B -- No --> C[Login Signup Page]
+B -- Yes --> D[Dashboard Page]
 
-    D --> E[Enter Daily Data (tracker.html)]
-    E --> F[CO2 Calculation Engine]
+C --> D
 
-    F --> G[(Store in LocalStorage)]
-    G --> H[Update Charts & UI]
+D --> E[Enter Daily Data]
+E --> F[CO2 Calculation Engine]
 
-    H --> I[Generate Insights (insights.html)]
-    H --> J[Update Gamification (Badges, Score)]
-    H --> K[Scenario Simulation (simulator.html)]
-    H --> L[Reports & Forecast (reports.html)]
+F --> G[Save Data in LocalStorage]
+G --> H[Update Charts and UI]
 
-    I --> M([User Improves Habits])
-    K --> M
-    L --> M
+H --> I[Generate AI Insights]
+H --> J[Update Score and Badges]
+H --> K[Run Scenario Simulation]
+H --> L[Generate Reports and Forecast]
 
-    M --> E
+I --> M([User Improves Habits])
+K --> M
+L --> M
+
+M --> E
 ```
 
 ## 🏗️ System Architecture
