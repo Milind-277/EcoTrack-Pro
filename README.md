@@ -61,6 +61,8 @@ graph TD
     D1 --> D3
     D2 --> D3
     D4 --> D3
+```
+
 ## 🔄 Application Workflow
 
 ```mermaid
@@ -88,7 +90,7 @@ flowchart TD
     L --> M
 
     M --> E
-
+```
 
 ## 🏗️ System Architecture
 
