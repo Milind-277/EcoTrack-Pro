@@ -3,7 +3,7 @@ AI-powered carbon footprint tracker with insights, forecasting & gamification
 
 ---
 
-#Problem Statement
+Problem Statement
 ----------
 - Climate change is driven by many small daily actions. Individuals often lack simple, private, and actionable feedback about how their daily choices (commute, AC use, food) translate to carbon emissions.
 - Without clear metrics, personalized recommendations, and motivating feedback, behavior change is difficult to start and sustain.
