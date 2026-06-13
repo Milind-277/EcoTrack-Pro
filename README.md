@@ -62,6 +62,7 @@ graph TD
     D2 --> D3
     D4 --> D3
 ```
+---
 
 ## 🔄 Application Workflow
 
@@ -92,6 +93,7 @@ L --> M
 
 M --> E
 ```
+---
 
 ## 🏗️ System Architecture
 
@@ -110,3 +112,31 @@ graph TD
 
     F --> G[Charts UI]
     E --> G
+```
+---
+
+## 🔮 Future Enhancements
+Firebase / Supabase integration
+Real-time API (weather, transport data)
+Social sharing & challenges
+Progressive Web App (PWA) support
+Mobile app version
+
+---
+
+## 🤝 Contribution
+
+Contributions are welcome!
+
+Fork repository
+Create branch
+Commit changes
+Push and open PR
+
+---
+
+## ❤️ Final Note
+
+EcoTrack Pro is not just a project — it is a step toward building sustainable habits through technology.
+
+“Measure your impact. Reduce your footprint. Build a greener future.” 🌍
