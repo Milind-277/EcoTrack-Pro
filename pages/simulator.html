@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack Pro | Simulator</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../components/navbar.js" defer></script>
+  <script src="../components/footer.js" defer></script>
+  <script src="../js/data.js" defer></script>
+  <script src="../js/logic.js" defer></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/charts.js" defer></script>
+  <script src="../js/ui.js" defer></script>
+  <script src="../js/tests.js" defer></script>
+</head>
+<body data-page="simulator">
+  <app-navbar></app-navbar>
+  <main class="container" id="main">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">What-if planning</p>
+        <h1>Scenario simulator</h1>
+        <p>Move the sliders to compare before and after emissions using your recent baseline.</p>
+      </div>
+    </header>
+    <section class="grid grid-2">
+      <article class="glass">
+        <h2>Change assumptions</h2>
+        <div class="slider-row"><label for="travelSlider">Reduce vehicle travel: <span id="travelValue">0%</span></label><input id="travelSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Reduce vehicle travel percentage"></div>
+        <div class="slider-row"><label for="acSlider">Reduce AC usage: <span id="acValue">0%</span></label><input id="acSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Reduce AC usage percentage"></div>
+        <div class="slider-row"><label for="applianceSlider">Reduce appliance usage: <span id="appliancesValue">0%</span></label><input id="applianceSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Reduce appliance usage percentage"></div>
+        <div class="slider-row"><label for="dietSlider">Shift toward vegetarian meals: <span id="dietValue">0%</span></label><input id="dietSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Shift toward vegetarian meals percentage"></div>
+        <div class="glass mt">
+          <p class="metric-label">Monthly CO2e saved</p>
+          <div class="metric-value" id="monthlySavings">0.00 kg</div>
+          <p>Equivalent to roughly <strong id="treeEquivalent">0</strong> tree-months of absorption.</p>
+        </div>
+      </article>
+      <article class="glass">
+        <h2>Before vs after</h2>
+        <div id="comparisonBlock" class="stack" aria-live="polite"></div>
+        <div class="chart-box mt"><canvas id="scenarioChart" aria-label="Scenario comparison chart"></canvas></div>
+      </article>
+    </section>
+  </main>
+  <app-footer></app-footer>
+</body>
+</html>

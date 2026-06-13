@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack Pro | Profile</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../components/navbar.js" defer></script>
+  <script src="../components/footer.js" defer></script>
+  <script src="../js/data.js" defer></script>
+  <script src="../js/logic.js" defer></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/charts.js" defer></script>
+  <script src="../js/ui.js" defer></script>
+  <script src="../js/tests.js" defer></script>
+</head>
+<body data-page="profile">
+  <app-navbar></app-navbar>
+  <main class="container" id="main">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Account</p>
+        <h1>Profile and achievements</h1>
+      </div>
+    </header>
+    <section class="grid grid-2">
+      <article class="glass stack">
+        <div class="cluster">
+          <div class="avatar-lg" id="profileInitial" aria-hidden="true">U</div>
+          <div>
+            <h2 id="profileName">Eco user</h2>
+            <p id="profileEmail"></p>
+            <p>Member since <span id="profileJoined"></span></p>
+          </div>
+        </div>
+        <div class="grid grid-3">
+          <div class="metric"><div class="metric-label">Points</div><div class="metric-value" id="profilePoints">0</div></div>
+          <div class="metric"><div class="metric-label">Streak</div><div class="metric-value" id="profileStreak">0</div></div>
+          <div class="metric"><div class="metric-label">Logs</div><div class="metric-value" id="profileLogs">0</div></div>
+        </div>
+      </article>
+      <article class="glass center">
+        <h2>Eco Score</h2>
+        <div class="score-ring" aria-label="Eco score meter"><span id="profileScore">50</span></div>
+      </article>
+    </section>
+    <section class="glass mt" aria-labelledby="badgesTitle">
+      <h2 id="badgesTitle">Badges</h2>
+      <div class="grid grid-3" id="badgesGrid"></div>
+    </section>
+  </main>
+  <app-footer></app-footer>
+</body>
+</html>

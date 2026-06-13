@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack Pro | Reports</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="../components/navbar.js" defer></script>
+  <script src="../components/footer.js" defer></script>
+  <script src="../js/data.js" defer></script>
+  <script src="../js/logic.js" defer></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/charts.js" defer></script>
+  <script src="../js/ui.js" defer></script>
+  <script src="../js/tests.js" defer></script>
+</head>
+<body data-page="reports">
+  <app-navbar></app-navbar>
+  <main class="container" id="main">
+    <header class="page-header no-print">
+      <div>
+        <p class="eyebrow">Forecast and summary</p>
+        <h1>Reports</h1>
+        <p>Weekly summaries, recent activity, and a deterministic five-day prediction.</p>
+      </div>
+      <button class="btn" id="exportBtn" type="button">Export PDF</button>
+    </header>
+    <section id="reportContent" class="stack">
+      <div class="grid grid-3">
+        <article class="glass metric"><div class="metric-label">Weekly total</div><div class="metric-value"><span id="weeklyTotal">0.0</span> kg</div></article>
+        <article class="glass metric"><div class="metric-label">Daily average</div><div class="metric-value"><span id="weeklyAverage">0.0</span> kg</div></article>
+        <article class="glass metric"><div class="metric-label">Forecast days</div><div class="metric-value" id="forecastDays">5</div></article>
+      </div>
+      <article class="glass">
+        <h2>5-day emission forecast</h2>
+        <div class="chart-box"><canvas id="forecastChart" aria-label="Forecast chart"></canvas></div>
+      </article>
+      <article class="glass">
+        <h2>Recent activity</h2>
+        <div class="table-wrap">
+          <table id="historyTable">
+            <thead><tr><th>Date</th><th>Transport</th><th>Distance</th><th>Electricity</th><th>Diet</th><th>Total kg</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+  </main>
+  <app-footer></app-footer>
+</body>
+</html>

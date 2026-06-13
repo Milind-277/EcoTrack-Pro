@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoTrack Pro | Insights</title>
+  <link rel="stylesheet" href="../css/styles.css">
+  <script src="../components/navbar.js" defer></script>
+  <script src="../components/footer.js" defer></script>
+  <script src="../js/data.js" defer></script>
+  <script src="../js/logic.js" defer></script>
+  <script src="../js/auth.js" defer></script>
+  <script src="../js/charts.js" defer></script>
+  <script src="../js/ui.js" defer></script>
+  <script src="../js/tests.js" defer></script>
+</head>
+<body data-page="insights">
+  <app-navbar></app-navbar>
+  <main class="container" id="main">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">Rule-based AI</p>
+        <h1>Smart insights</h1>
+        <p>Personalized, India-specific recommendations based on your highest emission category and recent trend.</p>
+      </div>
+      <a class="btn btn-outline" href="simulator.html">Test changes</a>
+    </header>
+    <section class="grid grid-2" id="insightsContainer" aria-live="polite"></section>
+  </main>
+  <app-footer></app-footer>
+</body>
+</html>

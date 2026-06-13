@@ -1,69 +1,48 @@
-/**
- * EcoTrack Pro - Auth Logic
- */
-
-document.addEventListener('DOMContentLoaded', () => {
-  const loginForm = document.getElementById('loginForm');
-  const signupForm = document.getElementById('signupForm');
-  const toSignup = document.getElementById('toSignup');
-  const toLogin = document.getElementById('toLogin');
-  
-  if (toSignup && toLogin) {
-    toSignup.addEventListener('click', (e) => {
-      e.preventDefault();
-      loginForm.style.display = 'none';
-      signupForm.style.display = 'block';
-    });
-    
-    toLogin.addEventListener('click', (e) => {
-      e.preventDefault();
-      signupForm.style.display = 'none';
-      loginForm.style.display = 'block';
-    });
+(() => {
+  function rootPrefix() {
+    return window.location.pathname.includes("/pages/") ? "../" : "./";
   }
 
-  if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value;
-      const pass = document.getElementById('loginPass').value;
-      
-      try {
-        window.EcoData.loginUser(email, pass);
-        window.App.showToast('Login successful!', 'success');
-        setTimeout(() => window.location.href = 'index.html', 800);
-      } catch (err) {
-        window.App.showToast(err.message, 'error');
+  window.EcoAuth = {
+    requireAuth() {
+      if (!window.EcoData.getCurrentUserSync()) {
+        window.location.replace(`${rootPrefix()}auth.html`);
+        return false;
       }
-    });
-  }
-
-  if (signupForm) {
-    signupForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('signupName').value;
-      const email = document.getElementById('signupEmail').value;
-      const pass = document.getElementById('signupPass').value;
-      
-      try {
-        window.EcoData.createUser(email, name, pass);
-        window.EcoData.loginUser(email, pass); // Auto login
-        window.App.showToast('Account created successfully!', 'success');
-        setTimeout(() => window.location.href = 'tracker.html', 800);
-      } catch (err) {
-        window.App.showToast(err.message, 'error');
+      return true;
+    },
+    redirectIfAuthenticated() {
+      if (window.EcoData.getCurrentUserSync()) {
+        window.location.replace(`${rootPrefix()}index.html`);
       }
-    });
-  }
-});
-
-// Guard route logic for pages that require auth
-function requireAuth() {
-  if (!window.EcoData) return;
-  const user = window.EcoData.getCurrentUser();
-  if (!user) {
-    window.location.href = 'auth.html';
-  }
-}
-
-window.EcoAuth = { requireAuth };
+    },
+    async login(form) {
+      const rawEmail = String(form.querySelector("#loginEmail")?.value || "").trim();
+      const rawPassword = String(form.querySelector("#loginPassword")?.value || "");
+      const email = window.EcoData.sanitizeText(rawEmail, 120).toLowerCase();
+      const password = rawPassword;
+      if (!email || !password) throw new Error("Please provide email and password.");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) throw new Error("Enter a valid email address.");
+      return window.EcoData.login(email, password);
+    },
+    async signup(form) {
+      const rawName = String(form.querySelector("#signupName")?.value || "").trim();
+      const rawEmail = String(form.querySelector("#signupEmail")?.value || "").trim();
+      const rawPassword = String(form.querySelector("#signupPassword")?.value || "");
+      const rawConfirm = String(form.querySelector("#signupConfirm")?.value || "");
+      const name = window.EcoData.sanitizeText(rawName, 80);
+      const email = window.EcoData.sanitizeText(rawEmail, 120).toLowerCase();
+      const password = rawPassword;
+      const confirm = rawConfirm;
+      if (password !== confirm) throw new Error("Passwords do not match.");
+      if (name.length < 2) throw new Error("Enter your full name (min 2 characters).");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) throw new Error("Enter a valid email address.");
+      if (password.length < 8) throw new Error("Password must be at least 8 characters.");
+      return window.EcoData.signup(name, email, password);
+    },
+    logout() {
+      window.EcoData.logout();
+      window.location.href = `${rootPrefix()}auth.html`;
+    }
+  };
+})();

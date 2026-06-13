@@ -3,124 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EcoTrack Pro - Dashboard</title>
+  <meta name="description" content="EcoTrack Pro dashboard for carbon footprint tracking, insights, forecasts, and sustainability habits.">
+  <title>EcoTrack Pro | Dashboard</title>
   <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="components/navbar.js" defer></script>
+  <script src="components/footer.js" defer></script>
+  <script src="js/data.js" defer></script>
+  <script src="js/logic.js" defer></script>
+  <script src="js/auth.js" defer></script>
+  <script src="js/charts.js" defer></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/tests.js" defer></script>
 </head>
-<body>
-
-  <nav>
-    <a href="index.html" class="logo"><i class="fas fa-leaf text-primary"></i> EcoTrack Pro</a>
-    <ul class="nav-links">
-      <li><a href="index.html" class="auth-required">Dashboard</a></li>
-      <li><a href="tracker.html" class="auth-required">Tracker</a></li>
-      <li><a href="insights.html" class="auth-required">Insights</a></li>
-      <li><a href="reports.html" class="auth-required">Reports</a></li>
-      <li><a href="simulator.html" class="auth-required">Simulator</a></li>
-      <li><a href="leaderboard.html" class="auth-required">Leaderboard</a></li>
-    </ul>
-    <div class="nav-actions">
-      <button class="theme-toggle" id="themeToggle"><i class="fas fa-sun"></i></button>
-      <div id="navAvatar" class="user-avatar-mini auth-required">U</div>
-      <button class="logout-btn auth-required" id="navLogout" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
-      <a href="auth.html" class="btn btn-primary guest-only">Sign In</a>
-    </div>
-  </nav>
-
-  <div class="container fade-in">
-    
-    <div class="flex justify-between items-center mb-4">
-      <div>
-        <h1 class="text-3xl">Welcome back, <span id="userName" class="text-primary">Eco Warrior</span></h1>
-        <p class="text-muted">Here is your carbon footprint overview.</p>
-      </div>
-      <a href="tracker.html" class="btn btn-primary"><i class="fas fa-plus"></i> Log Today</a>
-    </div>
-
-    <!-- Stats Row -->
-    <div class="grid grid-cols-4 mb-4">
-      <div class="glass-panel text-center">
-        <p class="text-muted text-sm uppercase">Total Points</p>
-        <div class="text-3xl font-bold mt-2 text-warning"><span id="totalPoints">0</span> <i class="fas fa-star text-sm"></i></div>
-      </div>
-      <div class="glass-panel text-center">
-        <p class="text-muted text-sm uppercase">Current Streak</p>
-        <div class="text-3xl font-bold mt-2 text-primary"><span id="streakCount">0</span> <i class="fas fa-fire text-sm"></i></div>
-      </div>
-      <div class="glass-panel text-center">
-        <p class="text-muted text-sm uppercase">30-Day Avg</p>
-        <div class="text-3xl font-bold mt-2 text-secondary"><span id="monthAvg">0</span> <span class="text-sm">kg/day</span></div>
-      </div>
-      <div class="glass-panel text-center">
-        <p class="text-muted text-sm uppercase">Last Logged</p>
-        <div class="text-xl font-bold mt-2"><span id="lastLogged">Never</span></div>
-      </div>
-    </div>
-
-    <!-- Charts Row -->
-    <div class="grid grid-cols-3 mb-4">
-      <!-- Line Chart -->
-      <div class="glass-panel" style="grid-column: span 2;">
-        <div class="flex justify-between items-center mb-3">
-          <h3><i class="fas fa-chart-line text-secondary"></i> 30-Day Trend</h3>
+<body data-page="dashboard">
+  <app-navbar></app-navbar>
+  <main class="container" id="main">
+    <section class="hero" aria-labelledby="dashboardTitle">
+      <div class="glass hero-copy">
+        <p class="eyebrow">Carbon intelligence for everyday life</p>
+        <h1 id="dashboardTitle">Welcome back, <span class="primary" id="userName">Eco user</span>.</h1>
+        <p>Track daily habits, understand what drives your footprint, forecast your next five days, and compete on sustainable progress.</p>
+        <div class="cluster mt">
+          <a class="btn" href="pages/tracker.html">Log today</a>
+          <a class="btn btn-outline" href="pages/simulator.html">Run simulator</a>
         </div>
-        <canvas id="trendChart"></canvas>
       </div>
+      <aside class="glass hero-visual" aria-label="EcoTrack product snapshot">
+        <div class="orbital-stat">
+          <p class="metric-label">This week average</p>
+          <div class="metric-value"><span id="weekAverage">0.0</span> kg/day</div>
+          <p>Lower is better. Eco Score rewards consistent, realistic reduction.</p>
+        </div>
+        <div class="city-grid" aria-hidden="true">
+          <div class="tower"></div><div class="tower"></div><div class="tower"></div><div class="tower"></div>
+          <div class="tower"></div><div class="tower"></div><div class="tower"></div>
+        </div>
+      </aside>
+    </section>
 
-      <!-- Pie Chart -->
-      <div class="glass-panel text-center">
-        <h3 class="mb-3 text-left"><i class="fas fa-chart-pie text-accent"></i> Breakdown</h3>
-        <canvas id="breakdownChart"></canvas>
-        <p id="noDataMsg" class="text-muted mt-4" style="display: none;">No data available yet. Start logging!</p>
-      </div>
-    </div>
+    <section class="grid grid-4 mt" aria-label="Account metrics">
+      <article class="glass metric"><div class="metric-label">Eco Score</div><div class="metric-value" id="ecoScore">50</div></article>
+      <article class="glass metric"><div class="metric-label">Points</div><div class="metric-value" id="totalPoints">0</div></article>
+      <article class="glass metric"><div class="metric-label">Daily streak</div><div class="metric-value" id="streakCount">0</div></article>
+      <article class="glass metric"><div class="metric-label">Logs</div><div class="metric-value" id="logCount">0</div></article>
+    </section>
 
-  </div>
+    <section class="grid grid-3 mt" aria-label="Charts and insights">
+      <article class="glass span-2">
+        <div class="between">
+          <h2>7-day footprint trend</h2>
+          <span class="chip">kg CO2e</span>
+        </div>
+        <div class="chart-box"><canvas id="trendChart" aria-label="Line chart of daily emissions"></canvas></div>
+      </article>
+      <article class="glass">
+        <h2>Category split</h2>
+        <div class="chart-box sm"><canvas id="breakdownChart" aria-label="Doughnut chart of emission categories"></canvas></div>
+      </article>
+    </section>
 
-  <script src="js/data.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/charts.js"></script>
-  <script src="js/app.js"></script>
-  
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      window.EcoAuth.requireAuth();
-      const user = window.EcoData.getCurrentUser();
-      if(!user) return;
-
-      document.getElementById('userName').innerText = user.name.split(' ')[0];
-      document.getElementById('totalPoints').innerText = user.points;
-      document.getElementById('streakCount').innerText = user.streak;
-
-      if(user.history.length > 0) {
-        const lastEntry = user.history[user.history.length - 1];
-        document.getElementById('lastLogged').innerText = new Date(lastEntry.date).toLocaleDateString();
-        
-        const sum = user.history.reduce((acc, val) => acc + val.total, 0);
-        document.getElementById('monthAvg').innerText = (sum / user.history.length).toFixed(1);
-
-        // Prepare chart data
-        const labels = user.history.map(h => new Date(h.date).toLocaleDateString(undefined, {month:'short', day:'numeric'}));
-        const totals = user.history.map(h => h.total);
-        
-        // Sum breakdown
-        let trans = 0, elec = 0, food = 0, water = 0;
-        user.history.forEach(h => {
-          trans += (h.transportDist * window.EcoData.FACTORS.transport[h.transportMode]);
-          elec += (h.acHours * window.EcoData.FACTORS.electricity.ac) + 
-                  (h.fanHours * window.EcoData.FACTORS.electricity.fan) + 
-                  (h.applianceHours * window.EcoData.FACTORS.electricity.appliances);
-          food += window.EcoData.FACTORS.food[h.foodType];
-          water += (h.waterLiters * window.EcoData.FACTORS.water);
-        });
-
-        window.EcoCharts.renderLineChart('trendChart', labels, totals, 'Daily Emissions (kg CO₂)');
-        window.EcoCharts.renderPieChart('breakdownChart', [trans, elec, food, water]);
-      } else {
-        document.getElementById('noDataMsg').style.display = 'block';
-      }
-    });
-  </script>
+    <section class="glass mt" aria-labelledby="insightTitle">
+      <p class="eyebrow">Rule-based AI insight</p>
+      <h2 id="insightTitle">Your next recommendation will appear here</h2>
+      <p id="insightPreview">Log your daily activity to generate personalized insights.</p>
+      <a class="btn btn-outline" href="pages/insights.html">View insights</a>
+    </section>
+  </main>
+  <app-footer></app-footer>
 </body>
 </html>
