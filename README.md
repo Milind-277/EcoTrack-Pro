@@ -32,32 +32,61 @@ This creates a gap between **awareness and action**.
 
 ---
 
-# 📂 Folder System
+## 🧩 Project Architecture (File Structure Diagram)
+graph TD
+    A[EcoTrack-Pro Root]
 
-EcoTrack-Pro/ 
-│ 
-├── about.html 
-├── auth.html 
-├── index.html 
-├── insights.html 
-├── leaderboard.html 
-├── profile.html 
-├── reports.html 
-├── leaderboard.html 
-├── simulator.html 
-├── tracker.html 
-│ 
-├── css/ 
-│   └── styles.css 
-│ 
-├── js/ 
-│   ├── app.js 
-│   ├── charts.js 
-│   ├── data.js 
-│   ├── auth.js
+    A --> B[HTML Pages]
+    B --> B1[index.html]
+    B --> B2[auth.html]
+    B --> B3[tracker.html]
+    B --> B4[insights.html]
+    B --> B5[reports.html]
+    B --> B6[simulator.html]
+    B --> B7[profile.html]
+    B --> B8[leaderboard.html]
+    B --> B9[about.html]
+
+    A --> C[CSS]
+    C --> C1[styles.css]
+
+    A --> D[JavaScript Modules]
+    D --> D1[app.js - Global Logic]
+    D --> D2[auth.js - Authentication]
+    D --> D3[data.js - CO2 Factors & Storage]
+    D --> D4[charts.js - Chart Rendering]
+
+    D1 --> D3
+    D2 --> D3
+    D4 --> D3
+## 🔄 Application Workflow
+flowchart TD
+    A([User Opens App]) --> B{Authenticated?}
+
+    B -- No --> C[Login / Signup (auth.html)]
+    B -- Yes --> D[Dashboard (index.html)]
+
+    C --> D
+
+    D --> E[Enter Daily Data (tracker.html)]
+    E --> F[CO2 Calculation Engine]
+
+    F --> G[(Store in LocalStorage)]
+    G --> H[Update Charts & UI]
+
+    H --> I[Generate Insights (insights.html)]
+    H --> J[Update Gamification (Badges, Score)]
+    H --> K[Scenario Simulation (simulator.html)]
+    H --> L[Reports & Forecast (reports.html)]
+
+    I --> M([User Improves Habits])
+    K --> M
+    L --> M
+
+    M --> E
 
 
-# 🏗️ System Architecture
+## 🏗️ System Architecture
 
 EcoTrack Pro follows a **client-side modular architecture** using browser-based storage and processing.
 
