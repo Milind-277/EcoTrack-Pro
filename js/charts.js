@@ -1,16 +1,16 @@
 (() => {
-  const charts = {};
+  "use strict";
 
-  function hasChart() {
-    return typeof window.Chart !== "undefined";
-  }
+  const instances = {};
 
-  function colors() {
-    const light = document.documentElement.dataset.theme === "light";
+  const isDark = () => document.documentElement.dataset.theme !== "light";
+
+  function palette() {
+    const dark = isDark();
     return {
-      text: light ? "#10201b" : "#f4fbf8",
-      muted: light ? "#4d655d" : "#a9bbb5",
-      grid: light ? "rgba(16,32,27,0.1)" : "rgba(255,255,255,0.1)",
+      text: dark ? "#f4fbf8" : "#10201b",
+      muted: dark ? "#a9bbb5" : "#4d655d",
+      grid: dark ? "rgba(255,255,255,0.09)" : "rgba(16,32,27,0.09)",
       primary: "#19c37d",
       secondary: "#4da3ff",
       accent: "#b072ff",
@@ -19,169 +19,203 @@
     };
   }
 
-  function destroy(id) {
-    try {
-      if (charts[id]) {
-        if (typeof charts[id].destroy === "function") charts[id].destroy();
-        else if (charts[id].chart && typeof charts[id].chart.destroy === "function") charts[id].chart.destroy();
-        delete charts[id];
+  function baseOpts(p) {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 500, easing: "easeInOutQuart" },
+      plugins: {
+        legend: {
+          labels: { color: p.text, boxWidth: 12, font: { family: "Inter, system-ui, sans-serif", size: 12 } }
+        },
+        tooltip: {
+          backgroundColor: "rgba(10,20,17,0.95)",
+          titleColor: "#fff",
+          bodyColor: "#dbe7e2",
+          padding: 12,
+          cornerRadius: 8,
+          borderColor: "rgba(25,195,125,0.3)",
+          borderWidth: 1
+        }
       }
-    } catch (err) {
-      // swallow chart cleanup errors but keep console trace in dev
-      if (typeof console !== "undefined" && console.debug) console.debug("Chart destroy error", err);
-      delete charts[id];
+    };
+  }
+
+  function axisStyle(p) {
+    return { ticks: { color: p.muted, font: { size: 11 } }, grid: { color: p.grid } };
+  }
+
+  function destroy(id) {
+    if (instances[id]) {
+      try { instances[id].destroy(); } catch (_) {}
+      delete instances[id];
     }
   }
 
-  function emptyState(id, message = "Chart unavailable") {
+  function emptyState(id, msg = "No data available. Start tracking today to see insights.") {
     const canvas = document.getElementById(id);
     if (!canvas) return;
     const box = canvas.closest(".chart-box");
     if (box && !box.querySelector(".chart-fallback")) {
       const p = document.createElement("p");
       p.className = "chart-fallback muted center";
-      p.textContent = message;
+      p.textContent = msg;
       box.appendChild(p);
     }
   }
 
-  function baseOptions(c) {
-    return {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: { duration: 420 },
-      plugins: {
-        legend: { labels: { color: c.text, boxWidth: 12 } },
-        tooltip: {
-          backgroundColor: "rgba(10, 20, 17, 0.94)",
-          titleColor: "#fff",
-          bodyColor: "#dbe7e2",
-          padding: 12,
-          cornerRadius: 8
-        }
-      }
-    };
-  }
-
-  function axis(c) {
-    return {
-      ticks: { color: c.muted },
-      grid: { color: c.grid }
-    };
-  }
-
-  window.EcoCharts = {
-    destroy,
-    renderLine(id, labels, data, label = "kg CO2e") {
-      destroy(id);
-      if (!hasChart()) return emptyState(id);
-      const c = colors();
-      try {
-        charts[id] = new Chart(document.getElementById(id), {
+  function renderLine(id, labels, data, label = "kg CO₂e") {
+    destroy(id);
+    const canvas = document.getElementById(id);
+    if (!canvas || typeof Chart === "undefined") return emptyState(id);
+    const p = palette();
+    try {
+      instances[id] = new Chart(canvas, {
         type: "line",
         data: {
           labels,
           datasets: [{
             label,
             data,
-            borderColor: c.primary,
-            backgroundColor: "rgba(25,195,125,0.16)",
+            borderColor: p.primary,
+            backgroundColor: "rgba(25,195,125,0.14)",
             fill: true,
-            tension: 0.35,
-            pointRadius: 4
+            tension: 0.38,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            pointBackgroundColor: p.primary
           }]
         },
         options: {
-          ...baseOptions(c),
-          scales: { x: axis(c), y: { ...axis(c), beginAtZero: true } }
+          ...baseOpts(p),
+          scales: { x: axisStyle(p), y: { ...axisStyle(p), beginAtZero: true } }
         }
-        }
-      } catch (err) {
-        emptyState(id, "Unable to render chart");
-        if (console && console.error) console.error(err);
-      }
-    },
-    renderForecast(id, labels, data, forecastStart) {
-      destroy(id);
-      if (!hasChart()) return emptyState(id);
-      const c = colors();
-      const actual = data.map((value, index) => (index < forecastStart ? value : null));
-      const forecast = data.map((value, index) => (index >= forecastStart - 1 ? value : null));
-      try {
-        charts[id] = new Chart(document.getElementById(id), {
+      });
+    } catch (e) {
+      emptyState(id, "Chart unavailable");
+      if (console?.error) console.error(e);
+    }
+  }
+
+  function renderForecast(id, labels, actuals, predictions, forecastStart, confidence = "Low") {
+    destroy(id);
+    const canvas = document.getElementById(id);
+    if (!canvas || typeof Chart === "undefined") return emptyState(id);
+    const p = palette();
+
+    const actualData = actuals.map((v, i) => (i < forecastStart ? v : null));
+    const bridge = actuals.length > 0 ? [...Array(forecastStart - 1).fill(null), actuals[actuals.length - 1], ...predictions] : predictions;
+
+    const confColor = { Low: p.danger, Medium: p.warning, High: p.primary }[confidence] || p.accent;
+
+    try {
+      instances[id] = new Chart(canvas, {
         type: "line",
         data: {
           labels,
           datasets: [
-            { label: "Actual", data: actual, borderColor: c.primary, backgroundColor: "rgba(25,195,125,0.14)", fill: true, tension: 0.35 },
-            { label: "Forecast", data: forecast, borderColor: c.accent, backgroundColor: "rgba(176,114,255,0.12)", borderDash: [6, 5], fill: true, tension: 0.35 }
+            {
+              label: "Actual",
+              data: [...actualData, ...Array(predictions.length).fill(null)],
+              borderColor: p.primary,
+              backgroundColor: "rgba(25,195,125,0.12)",
+              fill: true,
+              tension: 0.38,
+              pointRadius: 5,
+              pointBackgroundColor: p.primary
+            },
+            {
+              label: `Forecast (${confidence} confidence)`,
+              data: bridge,
+              borderColor: confColor,
+              backgroundColor: "rgba(176,114,255,0.1)",
+              borderDash: [6, 4],
+              fill: true,
+              tension: 0.38,
+              pointRadius: 4
+            }
           ]
         },
         options: {
-          ...baseOptions(c),
-          scales: { x: axis(c), y: { ...axis(c), beginAtZero: true } }
+          ...baseOpts(p),
+          scales: { x: axisStyle(p), y: { ...axisStyle(p), beginAtZero: true } }
         }
-        }
-      } catch (err) {
-        emptyState(id, "Unable to render chart");
-        if (console && console.error) console.error(err);
-      }
-    },
-    renderDoughnut(id, values) {
-      destroy(id);
-      if (!hasChart()) return emptyState(id);
-      const c = colors();
-      try {
-        charts[id] = new Chart(document.getElementById(id), {
+      });
+    } catch (e) {
+      emptyState(id, "Forecast unavailable");
+      if (console?.error) console.error(e);
+    }
+  }
+
+  function renderDoughnut(id, values) {
+    destroy(id);
+    const canvas = document.getElementById(id);
+    if (!canvas || typeof Chart === "undefined") return emptyState(id);
+    const p = palette();
+    try {
+      instances[id] = new Chart(canvas, {
         type: "doughnut",
         data: {
           labels: ["Transport", "Electricity", "Food"],
           datasets: [{
             data: values,
-            backgroundColor: [c.secondary, c.warning, c.primary],
-            borderWidth: 0
+            backgroundColor: [p.secondary, p.warning, p.primary],
+            borderWidth: 0,
+            hoverOffset: 8
           }]
         },
         options: {
-          ...baseOptions(c),
-          cutout: "68%"
+          ...baseOpts(p),
+          cutout: "70%"
         }
-        }
-      } catch (err) {
-        emptyState(id, "Unable to render chart");
-        if (console && console.error) console.error(err);
-      }
-    },
-    renderBars(id, labels, datasets) {
-      destroy(id);
-      if (!hasChart()) return emptyState(id);
-      const c = colors();
-      const palette = [c.danger, c.primary, c.secondary, c.warning];
-      try {
-        charts[id] = new Chart(document.getElementById(id), {
+      });
+    } catch (e) {
+      emptyState(id, "Chart unavailable");
+      if (console?.error) console.error(e);
+    }
+  }
+
+  function renderBars(id, labels, datasets) {
+    destroy(id);
+    const canvas = document.getElementById(id);
+    if (!canvas || typeof Chart === "undefined") return emptyState(id);
+    const p = palette();
+    const colors = [p.danger, p.primary, p.secondary, p.warning];
+    try {
+      instances[id] = new Chart(canvas, {
         type: "bar",
         data: {
           labels,
-          datasets: datasets.map((dataset, index) => ({
-            ...dataset,
-            backgroundColor: palette[index % palette.length],
-            borderRadius: 6
+          datasets: datasets.map((ds, i) => ({
+            ...ds,
+            backgroundColor: colors[i % colors.length],
+            borderRadius: 6,
+            borderSkipped: false
           }))
         },
         options: {
-          ...baseOptions(c),
-          scales: { x: axis(c), y: { ...axis(c), beginAtZero: true } }
+          ...baseOpts(p),
+          scales: { x: axisStyle(p), y: { ...axisStyle(p), beginAtZero: true } }
         }
-        }
-      } catch (err) {
-        emptyState(id, "Unable to render chart");
-        if (console && console.error) console.error(err);
-      }
-    },
-    refreshTheme() {
-      Object.values(charts).forEach((chart) => {
-        try { chart.update && chart.update("none"); } catch (e) { /* ignore */ }
       });
+    } catch (e) {
+      emptyState(id, "Chart unavailable");
+      if (console?.error) console.error(e);
     }
+  }
+
+  function refreshTheme() {
+    Object.values(instances).forEach((c) => {
+      try { if (c?.update) c.update("none"); } catch (_) {}
+    });
+  }
+
+  window.EcoCharts = {
+    destroy,
+    renderLine,
+    renderForecast,
+    renderDoughnut,
+    renderBars,
+    refreshTheme
   };
 })();

@@ -1,5 +1,5 @@
 ## EcoTrack Pro
-AI-powered carbon footprint tracker with insights, forecasting & gamification
+AI-powered carbon footprint tracker with insights, forecasting, and gamification
 
 ---
 
@@ -8,7 +8,7 @@ Problem Statement
 - Climate change is driven by many small daily actions. Individuals often lack simple, private, and actionable feedback about how their daily choices (commute, AC use, food) translate to carbon emissions.
 - Without clear metrics, personalized recommendations, and motivating feedback, behavior change is difficult to start and sustain.
 
---- 
+---
 
 Overview / Purpose
 ----------
@@ -89,19 +89,25 @@ System Workflow (step-by-step)
 5. Visualization — updated charts and trend indicators reflect new data.
 6. Gamification Update — Eco Score, streaks, points and badges get recalculated and persisted.
 
-System Workflow (Mermaid flowchart)
+---
+
+Architecture
+----------
 ```mermaid
 flowchart TD
-A[User Opens App] --> B{Authenticated?}
-B -- No --> C[Login Page]
-B -- Yes --> D[Dashboard]
-D --> E[Enter Daily Data]
-E --> F[CO2 Calculation Engine]
-F --> G[Store in LocalStorage]
-G --> H[Generate Insights]
-H --> I[Charts & Dashboard Update]
-I --> J[Gamification Update]
-J --> K[Reports & Forecast]
+  HTML[index.html and pages/*.html] --> Navbar[components/navbar.js]
+  HTML --> Footer[components/footer.js]
+  HTML --> UI[js/ui.js]
+  UI --> Auth[js/auth.js]
+  UI --> Data[js/data.js]
+  UI --> Logic[js/logic.js]
+  UI --> Charts[js/charts.js]
+  UI --> PDF[html2pdf.js]
+  Data --> Store[(localStorage simulated DB)]
+  Logic --> Data
+  Tests[js/tests.js] --> Logic
+  Tests --> Data
+  Charts --> ChartJS[Chart.js]
 ```
 
 ---
@@ -122,6 +128,113 @@ graph LR
 
 ---
 
-Live Demo 
+User Workflow
+----------
+```mermaid
+sequenceDiagram
+  participant User
+  participant UI as EcoTrack UI
+  participant Data as Data Layer
+  participant AI as Carbon Intelligence Engine
+  participant Offset as Offset System
+
+  User->>UI: Logs daily transport, electricity, and diet
+  UI->>Data: Sanitizes, validates, and stores entry
+  Data->>AI: Provides recent history
+  AI-->>UI: Breakdown, trend, action plan, projection
+  UI->>Offset: Calculates yearly footprint and trees required
+  User->>UI: Runs simulator or exports report
+  User->>Offset: Clicks Offset Now
+  Offset-->>Data: Saves offset badge and bonus points
+```
+
+## Intelligence Engine
+
+The intelligence engine in `js/logic.js` combines multiple signals:
+
+- Travel, electricity, and diet contribution percentages.
+- Weekly trend percentage and trend direction.
+- Highest-impact category detection.
+- Personalized action plan.
+- Monthly reduction projection from travel reduction and electricity reduction assumptions.
+- Yearly emissions, trees required, and simulated offset cost.
+
+Example output:
+
+```text
+Travel contributes 58%, electricity 27%, and diet 15%.
+Your emissions increased by 8% this week.
+Reducing travel by 20% and electricity by 2 hrs/day can reduce about 90 kg/month.
+```
+
+## Testing
+
+`js/tests.js` auto-runs on page load and prints PASS/FAIL output in the console.
+
+Included test functions:
+
+- `testCarbonCalculation()`
+- `testScoreCalculation()`
+- `testPredictionLogic()`
+- `testInputValidation()`
+- `testEdgeCases()`
+
+Expected console output:
+
+```text
+✔ PASS testCarbonCalculation
+✔ PASS testScoreCalculation
+✔ PASS testPredictionLogic
+✔ PASS testInputValidation
+✔ PASS testEdgeCases
+5/5 tests passed
+```
+
+## Security
+
+- All user-facing text input goes through `sanitizeText()`.
+- Numeric inputs are clamped to safe non-negative ranges.
+- Invalid enum values are rejected and replaced with safe defaults.
+- User-controlled data is rendered with `textContent` and DOM nodes, not unsafe HTML injection.
+- localStorage access is wrapped in try/catch.
+- Passwords use Web Crypto SHA-256 where available. This is still a static prototype, so localStorage is treated as a simulated database rather than production authentication.
+
+## Accessibility
+
+- Semantic `nav`, `main`, `section`, `article`, `table`, and `footer` structure.
+- Skip link for keyboard users.
+- Labels and `aria-label` values for form controls.
+- Visible focus states.
+- High-contrast dark and light themes.
+- Mobile responsive layout with keyboard-accessible navigation.
+
+## Real-World Impact
+
+EcoTrack Pro turns abstract carbon numbers into a concrete improvement loop:
+
+1. Measure daily habits.
+2. Understand which category dominates emissions.
+3. Follow a specific action plan.
+4. Simulate the savings before changing behavior.
+5. Forecast and report progress.
+6. Offset residual yearly emissions.
+
+## Future Scalability
+
+- Replace localStorage with Firebase, Supabase, or PostgreSQL without changing UI contracts.
+- Add organization dashboards for team or campus challenges.
+- Integrate smart meter, UPI transaction, commute, and fitness APIs.
+- Add verified carbon credit providers.
+- Add anomaly detection and seasonal forecasting models.
+
+## Local Preview
+
+```bash
+python -m http.server 8000
+```
+
+---
+
+Live Demo
 
 https://milind-277.github.io/EcoTrack-Pro/

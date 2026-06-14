@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EcoTrack Pro — National leaderboard ranking sustainable habits.">
   <title>EcoTrack Pro | Leaderboard</title>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="../components/navbar.js" defer></script>
   <script src="../components/footer.js" defer></script>
+  <script src="../js/engine.js" defer></script>
+  <script src="../js/ai.js" defer></script>
+  <script src="../js/predict.js" defer></script>
   <script src="../js/data.js" defer></script>
   <script src="../js/logic.js" defer></script>
   <script src="../js/auth.js" defer></script>
@@ -21,17 +25,20 @@
       <div>
         <p class="eyebrow">Gamification</p>
         <h1>Leaderboard</h1>
-        <p>Simulated national rankings with your live score inserted and ranked fairly.</p>
+        <p>Simulated national rankings — your live score is inserted and ranked in real time.</p>
       </div>
-      <div class="glass metric"><div class="metric-label">Your rank</div><div class="metric-value" id="myRank">...</div></div>
+      <article class="glass metric" aria-label="Your current rank">
+        <div class="metric-label">Your rank</div>
+        <div class="metric-value" id="myRank" aria-live="polite">…</div>
+      </article>
     </header>
     <section class="glass mb" aria-labelledby="podiumTitle">
       <h2 id="podiumTitle">Top 3</h2>
-      <div class="podium" id="podium"></div>
+      <div class="podium" id="podium" aria-label="Top 3 ranked users podium"></div>
     </section>
     <section class="glass" aria-labelledby="rankingTitle">
       <h2 id="rankingTitle">Top 10 rankings</h2>
-      <div id="leaderboardList" aria-live="polite"></div>
+      <div id="leaderboardList" aria-live="polite" aria-label="Leaderboard ranking list"></div>
     </section>
   </main>
   <app-footer></app-footer>

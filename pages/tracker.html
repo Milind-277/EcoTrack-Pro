@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EcoTrack Pro — Log your daily carbon footprint from transport, electricity, and diet.">
   <title>EcoTrack Pro | Tracker</title>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="../components/navbar.js" defer></script>
   <script src="../components/footer.js" defer></script>
+  <script src="../js/engine.js" defer></script>
+  <script src="../js/ai.js" defer></script>
+  <script src="../js/predict.js" defer></script>
   <script src="../js/data.js" defer></script>
   <script src="../js/logic.js" defer></script>
   <script src="../js/auth.js" defer></script>
@@ -21,53 +25,53 @@
       <div>
         <p class="eyebrow">Daily log</p>
         <h1>Carbon footprint tracker</h1>
-        <p>Enter realistic daily activity values. Inputs are validated and clamped before saving.</p>
+        <p>Enter realistic daily activity values. All inputs are validated and clamped before saving.</p>
       </div>
     </header>
     <section class="grid grid-3">
-      <form class="glass stack span-2" id="trackerForm" novalidate>
+      <form class="glass stack span-2" id="trackerForm" novalidate aria-label="Daily carbon entry form">
         <div class="grid grid-2">
           <div class="field">
             <label for="entryDate">Log date</label>
-            <input id="entryDate" type="date" aria-label="Log date" required>
+            <input id="entryDate" type="date" aria-label="Date for this carbon log entry" required>
           </div>
           <div class="field">
             <label for="transportMode">Transport mode</label>
-            <select id="transportMode" required aria-label="Primary transport mode">
+            <select id="transportMode" required aria-label="Primary transport mode for the day">
               <option value="bus">Bus</option>
               <option value="car">Car</option>
-              <option value="bike">Motorcycle or scooter</option>
-              <option value="metro">Metro or train</option>
-              <option value="bicycle">Bicycle or walking</option>
-              <option value="ev">Electric vehicle</option>
+              <option value="bike">Motorcycle / Scooter</option>
+              <option value="metro">Metro / Train</option>
+              <option value="bicycle">Bicycle / Walking</option>
+              <option value="ev">Electric Vehicle</option>
               <option value="autorick">Auto-rickshaw</option>
             </select>
           </div>
           <div class="field">
             <label for="transportDist">Distance travelled (km)</label>
-            <input id="transportDist" type="number" min="0" max="1000" step="0.1" required aria-label="Distance travelled in kilometres" placeholder="12">
+            <input id="transportDist" type="number" min="0" max="1000" step="0.1" required aria-label="Distance travelled in kilometres today" placeholder="12">
           </div>
           <div class="field">
             <label for="foodType">Diet today</label>
-            <select id="foodType" required aria-label="Diet type">
+            <select id="foodType" required aria-label="Diet type for the day">
               <option value="vegetarian">Vegetarian</option>
               <option value="vegan">Vegan</option>
               <option value="pescatarian">Pescatarian</option>
-              <option value="meat">Meat heavy</option>
+              <option value="meat">Meat-heavy</option>
             </select>
           </div>
-          <div class="field"><label for="acHours">AC hours</label><input id="acHours" type="number" min="0" max="24" step="0.25" value="0" aria-label="AC usage hours"></div>
-          <div class="field"><label for="fanHours">Fan hours</label><input id="fanHours" type="number" min="0" max="24" step="0.25" value="0" aria-label="Fan usage hours"></div>
-          <div class="field"><label for="applianceHours">Appliance hours</label><input id="applianceHours" type="number" min="0" max="24" step="0.25" value="0" aria-label="Other appliance usage hours"></div>
-          <div class="field"><label for="heaterHours">Heater/geyser hours</label><input id="heaterHours" type="number" min="0" max="24" step="0.25" value="0" aria-label="Heater usage hours"></div>
-          <div class="field"><label for="washingCycles">Washing cycles</label><input id="washingCycles" type="number" min="0" max="12" step="1" value="0" aria-label="Washing machine cycles"></div>
+          <div class="field"><label for="acHours">AC hours</label><input id="acHours" type="number" min="0" max="24" step="0.25" value="0" aria-label="Number of hours AC was used"></div>
+          <div class="field"><label for="fanHours">Fan hours</label><input id="fanHours" type="number" min="0" max="24" step="0.25" value="0" aria-label="Number of hours fan was used"></div>
+          <div class="field"><label for="applianceHours">Appliance hours</label><input id="applianceHours" type="number" min="0" max="24" step="0.25" value="0" aria-label="Number of hours other appliances were used"></div>
+          <div class="field"><label for="heaterHours">Heater / geyser hours</label><input id="heaterHours" type="number" min="0" max="24" step="0.25" value="0" aria-label="Number of hours heater or geyser was used"></div>
+          <div class="field"><label for="washingCycles">Washing cycles</label><input id="washingCycles" type="number" min="0" max="12" step="1" value="0" aria-label="Number of washing machine cycles run today"></div>
         </div>
-        <button class="btn btn-block" id="submitTracker" type="submit">Save daily log</button>
+        <button class="btn btn-block" id="submitTracker" type="submit" aria-label="Save today's carbon footprint log">Save daily log</button>
       </form>
-      <aside class="glass" aria-label="Live emissions preview">
+      <aside class="glass" aria-label="Live emissions preview" aria-live="polite">
         <p class="eyebrow">Live estimate</p>
         <div class="metric-value"><span id="liveTotal">0.00</span> kg</div>
-        <div class="stack">
+        <div class="stack mt">
           <div class="comparison-row"><span>Transport</span><strong id="transportPreview">0.00 kg</strong></div>
           <div class="comparison-row"><span>Electricity</span><strong id="electricityPreview">0.00 kg</strong></div>
           <div class="comparison-row"><span>Food</span><strong id="foodPreview">0.00 kg</strong></div>

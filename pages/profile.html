@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EcoTrack Pro — Your profile, Eco Score, streaks, and earned badges.">
   <title>EcoTrack Pro | Profile</title>
   <link rel="stylesheet" href="../css/styles.css">
   <script src="../components/navbar.js" defer></script>
   <script src="../components/footer.js" defer></script>
+  <script src="../js/engine.js" defer></script>
+  <script src="../js/ai.js" defer></script>
+  <script src="../js/predict.js" defer></script>
   <script src="../js/data.js" defer></script>
   <script src="../js/logic.js" defer></script>
   <script src="../js/auth.js" defer></script>
@@ -28,25 +32,28 @@
         <div class="cluster">
           <div class="avatar-lg" id="profileInitial" aria-hidden="true">U</div>
           <div>
-            <h2 id="profileName">Eco user</h2>
+            <h2 id="profileName">Eco User</h2>
             <p id="profileEmail"></p>
             <p>Member since <span id="profileJoined"></span></p>
           </div>
         </div>
-        <div class="grid grid-3">
+        <div class="grid grid-3" aria-label="Profile stats">
           <div class="metric"><div class="metric-label">Points</div><div class="metric-value" id="profilePoints">0</div></div>
           <div class="metric"><div class="metric-label">Streak</div><div class="metric-value" id="profileStreak">0</div></div>
           <div class="metric"><div class="metric-label">Logs</div><div class="metric-value" id="profileLogs">0</div></div>
         </div>
       </article>
-      <article class="glass center">
-        <h2>Eco Score</h2>
-        <div class="score-ring" aria-label="Eco score meter"><span id="profileScore">50</span></div>
+      <article class="glass center" aria-labelledby="ecoScoreLabel">
+        <h2 id="ecoScoreLabel">Eco Score</h2>
+        <div class="score-ring" role="meter" aria-label="Eco Score" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+          <span id="profileScore">50</span>
+        </div>
+        <p class="muted mt">Based on emissions, streak, and activity.</p>
       </article>
     </section>
     <section class="glass mt" aria-labelledby="badgesTitle">
       <h2 id="badgesTitle">Badges</h2>
-      <div class="grid grid-3" id="badgesGrid"></div>
+      <div class="grid grid-3" id="badgesGrid" aria-label="Achievement badges"></div>
     </section>
   </main>
   <app-footer></app-footer>

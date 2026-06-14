@@ -62,22 +62,6 @@ body {
   line-height: 1.55;
 }
 
-  .btn {
-    min-height: 2.75rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.7rem 1rem;
-    border: 1px solid transparent;
-    border-radius: var(--radius);
-    font-weight: 800;
-    color: color-mix(in srgb, #03100b 88%, var(--text) 12%);
-    background: var(--primary);
-    transition: transform 120ms ease, box-shadow 120ms ease;
-  }
-}
-
 :focus-visible {
   outline: none;
   box-shadow: var(--focus);
@@ -313,6 +297,13 @@ nav {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.glass:hover,
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 28px 75px rgba(0, 0, 0, 0.4);
 }
 
 .glass {
@@ -592,6 +583,15 @@ th {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: rgba(255, 255, 255, 0.055);
+  transition: transform 200ms ease, background 200ms ease;
+}
+
+.insight-card:hover,
+.leaderboard-row:hover,
+.comparison-row:hover,
+.badge-card:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .insight-card {
@@ -862,4 +862,58 @@ footer {
     box-shadow: none;
     border-color: #ddd;
   }
+}
+
+/* Badge icon */
+.badge-icon {
+  font-size: 2rem;
+  margin: 0.5rem 0;
+  display: block;
+}
+
+.badge-card {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.055);
+  transition: transform 200ms ease, background 200ms ease;
+}
+
+.badge-card:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* Offset module accent */
+.offset-module {
+  border-color: rgba(25, 195, 125, 0.35);
+  background: linear-gradient(
+    135deg,
+    rgba(25, 195, 125, 0.09),
+    var(--surface)
+  );
+}
+
+/* Confidence chips */
+.chip.low { color: var(--danger); background: rgba(255, 107, 107, 0.12); }
+.chip.medium { color: var(--warning); background: rgba(245, 184, 75, 0.12); }
+.chip.high { color: var(--primary); background: rgba(25, 195, 125, 0.12); }
+
+/* WCAG-compliant focus rings */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(25, 195, 125, 0.25);
+}
+
+/* Trend chip inline on insights header */
+#trendIndicator {
+  font-size: 0.85rem;
+  transition: background 300ms ease;
 }

@@ -3,11 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EcoTrack Pro — Simulate lifestyle changes and model carbon savings before committing.">
   <title>EcoTrack Pro | Simulator</title>
   <link rel="stylesheet" href="../css/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
   <script src="../components/navbar.js" defer></script>
   <script src="../components/footer.js" defer></script>
+  <script src="../js/engine.js" defer></script>
+  <script src="../js/ai.js" defer></script>
+  <script src="../js/predict.js" defer></script>
   <script src="../js/data.js" defer></script>
   <script src="../js/logic.js" defer></script>
   <script src="../js/auth.js" defer></script>
@@ -22,26 +26,38 @@
       <div>
         <p class="eyebrow">What-if planning</p>
         <h1>Scenario simulator</h1>
-        <p>Move the sliders to compare before and after emissions using your recent baseline.</p>
+        <p>Move the sliders to compare before and after emissions using your recent baseline in real time.</p>
       </div>
     </header>
     <section class="grid grid-2">
       <article class="glass">
-        <h2>Change assumptions</h2>
-        <div class="slider-row"><label for="travelSlider">Reduce vehicle travel: <span id="travelValue">0%</span></label><input id="travelSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Reduce vehicle travel percentage"></div>
-        <div class="slider-row"><label for="acSlider">Reduce AC usage: <span id="acValue">0%</span></label><input id="acSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Reduce AC usage percentage"></div>
-        <div class="slider-row"><label for="applianceSlider">Reduce appliance usage: <span id="appliancesValue">0%</span></label><input id="applianceSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Reduce appliance usage percentage"></div>
-        <div class="slider-row"><label for="dietSlider">Shift toward vegetarian meals: <span id="dietValue">0%</span></label><input id="dietSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Shift toward vegetarian meals percentage"></div>
+        <h2>Adjust assumptions</h2>
+        <div class="slider-row">
+          <label for="travelSlider">Reduce vehicle travel: <span id="travelValue" aria-live="polite">0%</span></label>
+          <input id="travelSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Percentage reduction in vehicle travel">
+        </div>
+        <div class="slider-row">
+          <label for="acSlider">Reduce AC usage: <span id="acValue" aria-live="polite">0%</span></label>
+          <input id="acSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Percentage reduction in AC usage">
+        </div>
+        <div class="slider-row">
+          <label for="applianceSlider">Reduce appliance usage: <span id="appliancesValue" aria-live="polite">0%</span></label>
+          <input id="applianceSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Percentage reduction in appliance usage">
+        </div>
+        <div class="slider-row">
+          <label for="dietSlider">Shift toward plant-based diet: <span id="dietValue" aria-live="polite">0%</span></label>
+          <input id="dietSlider" type="range" min="0" max="100" step="5" value="0" aria-label="Percentage shift toward plant-based diet">
+        </div>
         <div class="glass mt">
-          <p class="metric-label">Monthly CO2e saved</p>
-          <div class="metric-value" id="monthlySavings">0.00 kg</div>
+          <p class="metric-label">Monthly CO₂e saved</p>
+          <div class="metric-value" id="monthlySavings" aria-live="polite">0.00 kg</div>
           <p>Equivalent to roughly <strong id="treeEquivalent">0</strong> tree-months of absorption.</p>
         </div>
       </article>
       <article class="glass">
         <h2>Before vs after</h2>
-        <div id="comparisonBlock" class="stack" aria-live="polite"></div>
-        <div class="chart-box mt"><canvas id="scenarioChart" aria-label="Scenario comparison chart"></canvas></div>
+        <div id="comparisonBlock" class="stack" aria-live="polite" aria-label="Emission comparison before and after changes"></div>
+        <div class="chart-box mt"><canvas id="scenarioChart" role="img" aria-label="Bar chart comparing before and after emissions by category"></canvas></div>
       </article>
     </section>
   </main>

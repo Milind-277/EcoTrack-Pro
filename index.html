@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="EcoTrack Pro dashboard for carbon footprint tracking, insights, forecasts, and sustainability habits.">
+  <meta name="description" content="EcoTrack Pro — Carbon Intelligence Platform. Track, analyze, predict and reduce your carbon footprint.">
   <title>EcoTrack Pro | Dashboard</title>
   <link rel="stylesheet" href="css/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
   <script src="components/navbar.js" defer></script>
   <script src="components/footer.js" defer></script>
+  <script src="js/engine.js" defer></script>
+  <script src="js/ai.js" defer></script>
+  <script src="js/predict.js" defer></script>
   <script src="js/data.js" defer></script>
   <script src="js/logic.js" defer></script>
   <script src="js/auth.js" defer></script>
@@ -21,19 +24,19 @@
   <main class="container" id="main">
     <section class="hero" aria-labelledby="dashboardTitle">
       <div class="glass hero-copy">
-        <p class="eyebrow">Carbon intelligence for everyday life</p>
-        <h1 id="dashboardTitle">Welcome back, <span class="primary" id="userName">Eco user</span>.</h1>
-        <p>Track daily habits, understand what drives your footprint, forecast your next five days, and compete on sustainable progress.</p>
+        <p class="eyebrow">Carbon Intelligence Platform</p>
+        <h1 id="dashboardTitle">Welcome back, <span class="primary" id="userName">Eco User</span>.</h1>
+        <p>Track daily habits, analyze what drives your footprint, forecast the next five days, and compete on sustainable progress.</p>
         <div class="cluster mt">
-          <a class="btn" href="pages/tracker.html">Log today</a>
-          <a class="btn btn-outline" href="pages/simulator.html">Run simulator</a>
+          <a class="btn" href="pages/tracker.html" aria-label="Log today's carbon activity">Log today</a>
+          <a class="btn btn-outline" href="pages/simulator.html" aria-label="Open scenario simulator">Run simulator</a>
         </div>
       </div>
-      <aside class="glass hero-visual" aria-label="EcoTrack product snapshot">
+      <aside class="glass hero-visual" aria-label="EcoTrack weekly snapshot">
         <div class="orbital-stat">
           <p class="metric-label">This week average</p>
           <div class="metric-value"><span id="weekAverage">0.0</span> kg/day</div>
-          <p>Lower is better. Eco Score rewards consistent, realistic reduction.</p>
+          <p>Lower is better. Eco Score rewards consistent reduction.</p>
         </div>
         <div class="city-grid" aria-hidden="true">
           <div class="tower"></div><div class="tower"></div><div class="tower"></div><div class="tower"></div>
@@ -43,32 +46,44 @@
     </section>
 
     <section class="grid grid-4 mt" aria-label="Account metrics">
-      <article class="glass metric"><div class="metric-label">Eco Score</div><div class="metric-value" id="ecoScore">50</div></article>
-      <article class="glass metric"><div class="metric-label">Points</div><div class="metric-value" id="totalPoints">0</div></article>
-      <article class="glass metric"><div class="metric-label">Daily streak</div><div class="metric-value" id="streakCount">0</div></article>
-      <article class="glass metric"><div class="metric-label">Logs</div><div class="metric-value" id="logCount">0</div></article>
+      <article class="glass metric"><div class="metric-label">Eco Score</div><div class="metric-value" id="ecoScore" aria-live="polite">50</div></article>
+      <article class="glass metric"><div class="metric-label">Points</div><div class="metric-value" id="totalPoints" aria-live="polite">0</div></article>
+      <article class="glass metric"><div class="metric-label">Daily streak</div><div class="metric-value" id="streakCount" aria-live="polite">0</div></article>
+      <article class="glass metric"><div class="metric-label">Logs</div><div class="metric-value" id="logCount" aria-live="polite">0</div></article>
     </section>
 
     <section class="grid grid-3 mt" aria-label="Charts and insights">
       <article class="glass span-2">
         <div class="between">
           <h2>7-day footprint trend</h2>
-          <span class="chip">kg CO2e</span>
+          <span class="chip">kg CO₂e</span>
         </div>
-        <div class="chart-box"><canvas id="trendChart" aria-label="Line chart of daily emissions"></canvas></div>
+        <div class="chart-box"><canvas id="trendChart" role="img" aria-label="Line chart of daily carbon emissions over 7 days"></canvas></div>
       </article>
       <article class="glass">
         <h2>Category split</h2>
-        <div class="chart-box sm"><canvas id="breakdownChart" aria-label="Doughnut chart of emission categories"></canvas></div>
+        <div class="chart-box sm"><canvas id="breakdownChart" role="img" aria-label="Doughnut chart of emission categories"></canvas></div>
       </article>
     </section>
 
-    <section class="glass mt" aria-labelledby="insightTitle">
-      <p class="eyebrow">Rule-based AI insight</p>
-      <h2 id="insightTitle">Your next recommendation will appear here</h2>
-      <p id="insightPreview">Log your daily activity to generate personalized insights.</p>
-      <a class="btn btn-outline" href="pages/insights.html">View insights</a>
-    </section>
+    <div class="grid grid-2 mt">
+      <section class="glass" aria-labelledby="insightTitle">
+        <p class="eyebrow">Carbon Intelligence</p>
+        <h2 id="insightTitle">Your recommendation will appear here</h2>
+        <p id="insightPreview">Log your daily activity to generate personalized insights.</p>
+        <a class="btn btn-outline" href="pages/insights.html" aria-label="View all AI insights">View all insights</a>
+      </section>
+
+      <section class="glass offset-module" aria-labelledby="offsetTitle">
+        <p class="eyebrow">Carbon Offset System</p>
+        <h2 id="offsetTitle">Balance your impact</h2>
+        <p>Estimated yearly emissions: <strong id="yearlyEmissions">0 kg</strong></p>
+        <p>You need <strong class="primary" id="treesRequired">0 trees</strong> to offset your yearly CO₂ footprint.</p>
+        <div class="cluster mt">
+          <button class="btn" id="offsetBtn" type="button" aria-label="Offset your yearly carbon emissions">Offset Now</button>
+        </div>
+      </section>
+    </div>
   </main>
   <app-footer></app-footer>
 </body>

@@ -3,11 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Sign in to EcoTrack Pro.">
+  <meta name="description" content="EcoTrack Pro — Sign in or create your private carbon intelligence account.">
   <title>EcoTrack Pro | Sign In</title>
   <link rel="stylesheet" href="css/styles.css">
   <script src="components/navbar.js" defer></script>
   <script src="components/footer.js" defer></script>
+  <script src="js/engine.js" defer></script>
+  <script src="js/ai.js" defer></script>
+  <script src="js/predict.js" defer></script>
   <script src="js/data.js" defer></script>
   <script src="js/logic.js" defer></script>
   <script src="js/auth.js" defer></script>
@@ -22,42 +25,42 @@
       <p class="eyebrow">Private local carbon tracking</p>
       <h1 id="authTitle">Welcome back</h1>
       <p id="authSubtitle">Sign in to continue tracking your impact.</p>
-      <div class="cluster mb" role="group" aria-label="Authentication mode">
-        <button class="btn" type="button" data-auth-mode="login">Sign in</button>
-        <button class="btn btn-outline" type="button" data-auth-mode="signup">Create account</button>
+      <div class="cluster mb" role="group" aria-label="Authentication mode selector">
+        <button class="btn" type="button" data-auth-mode="login" aria-label="Switch to sign in mode">Sign in</button>
+        <button class="btn btn-outline" type="button" data-auth-mode="signup" aria-label="Switch to create account mode">Create account</button>
       </div>
 
-      <form id="loginForm" class="stack" novalidate>
+      <form id="loginForm" class="stack" novalidate aria-label="Sign in form">
         <div class="field">
           <label for="loginEmail">Email address</label>
-          <input id="loginEmail" name="email" type="email" autocomplete="email" required aria-label="Login email address" placeholder="you@example.com">
+          <input id="loginEmail" name="email" type="email" autocomplete="email" required aria-label="Email address for sign in" placeholder="you@example.com">
         </div>
         <div class="field">
           <label for="loginPassword">Password</label>
-          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required minlength="8" aria-label="Login password">
+          <input id="loginPassword" name="password" type="password" autocomplete="current-password" required minlength="8" aria-label="Password for sign in">
         </div>
-        <button class="btn btn-block" id="loginBtn" type="submit">Sign in</button>
+        <button class="btn btn-block" id="loginBtn" type="submit" aria-label="Submit sign in form">Sign in</button>
       </form>
 
-      <form id="signupForm" class="stack hidden" novalidate>
+      <form id="signupForm" class="stack hidden" novalidate aria-label="Create account form">
         <div class="field">
           <label for="signupName">Full name</label>
-          <input id="signupName" name="name" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-label="Full name" placeholder="Eco User">
+          <input id="signupName" name="name" type="text" autocomplete="name" required minlength="2" maxlength="80" aria-label="Full name for new account" placeholder="Eco User">
         </div>
         <div class="field">
           <label for="signupEmail">Email address</label>
-          <input id="signupEmail" name="email" type="email" autocomplete="email" required aria-label="Signup email address" placeholder="you@example.com">
+          <input id="signupEmail" name="email" type="email" autocomplete="email" required aria-label="Email address for new account" placeholder="you@example.com">
         </div>
         <div class="field">
           <label for="signupPassword">Password</label>
-          <input id="signupPassword" name="password" type="password" autocomplete="new-password" required minlength="8" aria-label="Create password">
-          <span class="field-hint">Use at least 8 characters.</span>
+          <input id="signupPassword" name="password" type="password" autocomplete="new-password" required minlength="8" aria-label="Password for new account">
+          <span class="field-hint">Minimum 8 characters.</span>
         </div>
         <div class="field">
           <label for="signupConfirm">Confirm password</label>
-          <input id="signupConfirm" name="confirm" type="password" autocomplete="new-password" required minlength="8" aria-label="Confirm password">
+          <input id="signupConfirm" name="confirm" type="password" autocomplete="new-password" required minlength="8" aria-label="Confirm password for new account">
         </div>
-        <button class="btn btn-block" id="signupBtn" type="submit">Create account</button>
+        <button class="btn btn-block" id="signupBtn" type="submit" aria-label="Submit create account form">Create account</button>
       </form>
     </section>
   </main>
