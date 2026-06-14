@@ -229,7 +229,6 @@ EcoTrack Pro turns abstract carbon numbers into a concrete improvement loop:
 
 ## Live Demo
 
-```bash
 https://milind-277.github.io/EcoTrack-Pro/
-```
+
 
