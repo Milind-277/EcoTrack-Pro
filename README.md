@@ -227,14 +227,9 @@ EcoTrack Pro turns abstract carbon numbers into a concrete improvement loop:
 - Add verified carbon credit providers.
 - Add anomaly detection and seasonal forecasting models.
 
-## Local Preview
+## Live Demo
 
 ```bash
-python -m http.server 8000
+https://milind-277.github.io/EcoTrack-Pro/
 ```
 
----
-
-Live Demo
-
-https://milind-277.github.io/EcoTrack-Pro/
